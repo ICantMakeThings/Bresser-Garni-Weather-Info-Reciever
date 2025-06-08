@@ -1,4 +1,4 @@
- A simple Weather station reviever for and not limited to Bresser/Garni, It shows info via a local web UI, Made with a CC1101 and D1 mini (ESP8266) 
+ A simple Weather station receiver for and not limited to Bresser/Garni, It shows info via a local web UI, Made with a CC1101 and D1 mini (ESP8266) 
  
 ![image](https://github.com/user-attachments/assets/3abae9a5-da13-4954-bd19-1b025aa06c66)
 
