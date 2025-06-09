@@ -17,3 +17,15 @@
 | 6          | D7          |
 | 7          | D6          |
 | 8          | D1          |
+
+Software setup:
+When you first program your D1 mini and everything is wired up,
+you'll get a new Acsess point called `WeatherSetupAP`, connect to it
+the password is `ICantMakeThings` Next press config Wifi, select your
+home wifi from the list and enter the password, and press save.
+A window saying its saving the password will show, it should
+take about 1 minuite to save, once done the AP will dissapear.
+to acsess your weather info, open this link: [http://weather.lan](http://weather.lan/)
+If you have multiple recievers (make sure they are away enough
+from eachother to not get data from the wrong weather station!)
+the next link will be [http://weather1.lan](http://weather1.lan/) then 2, 3, 4 and so on.
