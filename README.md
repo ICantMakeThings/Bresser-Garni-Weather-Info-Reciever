@@ -29,3 +29,4 @@ to acsess your weather info, open this link: [http://weather.lan](http://weather
 If you have multiple recievers (make sure they are away enough
 from eachother to not get data from the wrong weather station!)
 the next link will be [http://weather1.lan](http://weather1.lan/) then 2, 3, 4 and so on.
+to reset wifi, go to a serial terminal like [this](https://serial.huhn.me/) and type in terminal `resetwifi` to reset to factory settings.
