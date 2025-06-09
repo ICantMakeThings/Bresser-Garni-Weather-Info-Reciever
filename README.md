@@ -26,6 +26,7 @@ home wifi from the list and enter the password, and press save.
 A window saying its saving the password will show, it should
 take about 1 minuite to save, once done the AP will dissapear.
 to acsess your weather info, open this link: [http://weather.lan](http://weather.lan/)
+!!!Only on supported home networks!!! else you have to get the local ip, 192.168.x.x (find out via router or look at logs [here](https://serial.huhn.me/))
 If you have multiple recievers (make sure they are away enough
 from eachother to not get data from the wrong weather station!)
 the next link will be [http://weather1.lan](http://weather1.lan/) then 2, 3, 4 and so on.
