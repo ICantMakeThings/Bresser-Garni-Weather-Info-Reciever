@@ -18,7 +18,7 @@
 | 7          | D6          |
 | 8          | D1          |
 
-Software setup:
+### Software setup:
 When you first program your D1 mini and everything is wired up,
 you'll get a new Acsess point called `WeatherSetupAP`, connect to it
 the password is `ICantMakeThings` Next press config Wifi, select your
@@ -31,3 +31,10 @@ If you have multiple recievers (make sure they are away enough
 from eachother to not get data from the wrong weather station!)
 the next link will be [http://weather1.lan](http://weather1.lan/) then 2, 3, 4 and so on.
 to reset wifi, go to a serial terminal like [this](https://serial.huhn.me/) and type in terminal `resetwifi` to reset to factory settings.
+
+### Flashing:
+Download latest [release](https://github.com/ICantMakeThings/Bresser-Garni-Weather-Info-Reciever/releases/download/Release/BGWIR-V2.bin),
+If your default download folder on your browser is downloads then all you need to do is:
+`esptool.py --port /dev/ttyUSB0 write_flash 0x00000 Downloads/BGWIR-V2.bin`
+If your on windows then download and run esptool.py and do the same command as above except you replace
+`/dev/ttyUSB0` with `COM` and the number of the com port that the D1 mini is connected to eg: `COM4`
