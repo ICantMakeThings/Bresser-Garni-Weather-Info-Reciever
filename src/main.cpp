@@ -1,24 +1,17 @@
-#include <Arduino.h>
-#include <Arduino.h>
-#include "WeatherSensorCfg.h"
-#include "WeatherSensor.h"
-#include "InitBoard.h"
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
+#include <Arduino.h> // Arduino, what this is based off!
+#include "WeatherSensorCfg.h" // weather stuff
+#include "WeatherSensor.h" // weather stuff
+#include "InitBoard.h" // weather stuff
+#include <ESP8266WiFi.h> // The base, WIFI!
+#include <ESP8266WebServer.h> // The actual server
+#include <WiFiManager.h> // To get that AP config
+#include <ESP8266mDNS.h> // To get weather.lan
 
-
-#ifndef STASSID
-#define STASSID "YourWiFiName"
-#define STAPSK "YourWiFiPassword"
-#endif
-
-const char* ssid = STASSID;
-const char* password = STAPSK;
-ESP8266WebServer server(80);
+ESP8266WebServer server(80); // Server on port 80
 WeatherSensor ws;
 String latestSensorData = "No data yet.\n";
 
-void handlePage() {
+void handlePage() { // Loads the UI, with html and js
   String html = R"rawliteral(
   <!DOCTYPE html>
   <html lang="en">
@@ -391,7 +384,7 @@ void handlePage() {
             }
 
             // Update gauges
-            drawGauge(lightCanvas, isNaN(json.light) ? 0 : json.light, 10, "Light", "klx");
+            drawGauge(lightCanvas, isNaN(json.light) ? 0 : json.light, 100, "Light", "klx");
             drawGauge(uvCanvas, isNaN(json.uv) ? 0 : json.uv, 11, "UV Index", "");
 
             // Update wind compass & speed
@@ -417,6 +410,32 @@ void handlePage() {
   server.send(200, "text/html", html);
 }
 
+void setupMDNS() {// Set local hostname weather.lan only on supported home networks!
+  String base = "weather";
+  int suffix = 0;
+  bool started = false;
+
+  while (!started && suffix < 10) {
+    String hostname = base + (suffix == 0 ? "" : String(suffix));
+    WiFi.hostname(hostname);
+
+    started = MDNS.begin(hostname.c_str());
+
+    if (started) {
+      Serial.println("MDNS started successfully.");
+      Serial.print("Access your device at: http://");
+      Serial.print(hostname);
+      Serial.println(".lan (OR .local)");
+    } else {
+      suffix++;
+      delay(100);
+    }
+  }
+
+  if (!started) {
+    Serial.println("Failed to start MDNS after 10 attempts.");
+  }
+}
 
 
 // Send sensor data as JSON:
@@ -424,11 +443,11 @@ void handleData() {
   if (latestSensorData.startsWith("{")) {
     server.send(200, "application/json", latestSensorData);
   } else {
-    // Send empty valid JSON to avoid JSON parse errors on client
     server.send(200, "application/json", "{}");
   }
 }
 
+// Setup the WiFi, server, and everything, Loading.
 void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
@@ -437,26 +456,40 @@ void setup() {
   initBoard();
   ws.begin();
 
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
+  WiFiManager wm;
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  if (!wm.autoConnect("WeatherSetupAP", "ICantMakeThings")) {
+    Serial.println("Failed to connect, restarting...");
+    delay(3000);
+    ESP.restart();
   }
 
-  Serial.println("\nWiFi connected");
+  Serial.println("WiFi connected");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
-  server.on("/", handlePage);     // Send HTML page
-  server.on("/data", handleData); // Send JSON data
+  setupMDNS();
+  server.on("/", handlePage);
+  server.on("/data", handleData);
   server.begin();
   Serial.println("HTTP server started");
 }
 
 void loop() {
   server.handleClient();
+
+// If command resetwifi gets sent, it wipes everything.
+  if (Serial.available()) {
+    String command = Serial.readStringUntil('\n');
+    command.trim();
+    if (command.equalsIgnoreCase("resetwifi")) {
+      Serial.println("Resetting WiFi settings...");
+      WiFi.disconnect(true);  
+      delay(500);
+      ESP.eraseConfig();       
+      delay(500);
+      ESP.restart();          
+    }
+  }
 
   static unsigned long lastCheck = 0;
   if (millis() - lastCheck >= 1000) {
@@ -478,16 +511,18 @@ void loop() {
       float light    = ws.sensor[i].w.light_ok    ? ws.sensor[i].w.light_klx : NAN;
 
       latestSensorData = "{";
-      latestSensorData += "\"temperature\":" + String(temp, 1) + ",";
-      latestSensorData += "\"humidity\":" + String(hum, 1) + ",";
-      latestSensorData += "\"windGust\":" + String(windGust, 1) + ",";
-      latestSensorData += "\"windAvg\":" + String(windAvg, 1) + ",";
-      latestSensorData += "\"windDir\":" + String(windDir, 1) + ",";
-      latestSensorData += "\"rain\":" + String(rain, 1) + ",";
-      latestSensorData += "\"uv\":" + String(uv, 1) + ",";
-      latestSensorData += "\"light\":" + String(light, 1);
+      latestSensorData += "\"temperature\":" + (isnan(temp) ? "null" : String(temp, 1)) + ",";
+      latestSensorData += "\"humidity\":" + (isnan(hum) ? "null" : String(hum, 1)) + ",";
+      latestSensorData += "\"windGust\":" + (isnan(windGust) ? "null" : String(windGust, 1)) + ",";
+      latestSensorData += "\"windAvg\":" + (isnan(windAvg) ? "null" : String(windAvg, 1)) + ",";
+      latestSensorData += "\"windDir\":" + (isnan(windDir) ? "null" : String(windDir, 1)) + ",";
+      latestSensorData += "\"rain\":" + (isnan(rain) ? "null" : String(rain, 1)) + ",";
+      latestSensorData += "\"uv\":" + (isnan(uv) ? "null" : String(uv, 1)) + ",";
+      latestSensorData += "\"light\":" + (isnan(light) ? "null" : String(light, 1));
       latestSensorData += "}";
 
+
+      
       Serial.println("Updated sensor data: " + latestSensorData);
     }
   }
