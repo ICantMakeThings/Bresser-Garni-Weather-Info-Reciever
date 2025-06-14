@@ -21,6 +21,24 @@ void handlePage() { // Loads the UI, with html and js
       <title>Bresser Weather Dashboard</title>
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <style>
+      .status-bar {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #1e1e1e;
+        padding: 8px 16px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        box-shadow: 0 0 10px rgba(0, 188, 212, 0.25);
+       color: #00bcd4;
+       z-index: 9999;
+      }
+      .status-bar.low-battery #batteryDisplay {
+        color: #ff5252;
+      }
+      .status-bar.weak-signal #rssiDisplay {
+        color: #ffc107;
+      }
         /* Reset & base */
         * {
           box-sizing: border-box;
@@ -140,6 +158,10 @@ void handlePage() { // Loads the UI, with html and js
       </style>
     </head>
     <body>
+    <div class="status-bar">
+      <span id="rssiDisplay">RSSI: --</span> |
+      <span id="batteryDisplay">Battery: --</span>
+    </div>
       <div class="dashboard">
         <h2>Live Weather Data</h2>
         <pre id="data">Loading...</pre>
@@ -166,6 +188,7 @@ void handlePage() { // Loads the UI, with html and js
       </div>
 
       <script>
+      let lastUpdateTime = Date.now();
         // Chart.js setup
         const ctx = document.getElementById('weatherChart').getContext('2d');
         const chart = new Chart(ctx, {
@@ -350,24 +373,63 @@ void handlePage() { // Loads the UI, with html and js
             ctx.restore();
           }
         }
+       setInterval(() => {
+          const now = Date.now();
+          const rssiEl = document.getElementById("rssiDisplay");
+          const statusBar = document.querySelector(".status-bar");
+
+        if (now - lastUpdateTime > 10000) {
+            rssiEl.innerText = "Server Offline";
+            statusBar.classList.add("weak-signal");
+         }
+        }, 1000);
 
         // Fetch data and update UI
         async function fetchData() {
-          try {
-            const res = await fetch("/data");
-            if (!res.ok) throw new Error("Network error");
-            const json = await res.json();
-            const time = new Date().toLocaleTimeString();
+     try {
+      const res = await fetch("/data");
+       if (!res.ok) throw new Error("Network error");
+        const json = await res.json();
 
-            document.getElementById("data").innerText =
-              "Temperature: " + json.temperature + " °C\n" +
-              "Humidity: " + json.humidity + " %\n" +
-              "Wind Gust: " + json.windGust + " m/s\n" +
-              "Wind Avg: " + json.windAvg + " m/s\n" +
-              "Wind Dir: " + json.windDir + " °\n" +
-              "Rain: " + json.rain + " mm\n" +
-              "UV Index: " + json.uv + "\n" +
-              "Light: " + json.light + " klx\n";
+       const time = new Date().toLocaleTimeString();
+
+       document.getElementById("data").innerText =
+          "Temperature: " + json.temperature + " °C\n" +
+          "Humidity: " + json.humidity + " %\n" +
+          "Wind Gust: " + json.windGust + " m/s\n" +
+          "Wind Avg: " + json.windAvg + " m/s\n" +
+          "Wind Dir: " + json.windDir + " °\n" +
+          "Rain: " + json.rain + " mm\n" +
+          "UV Index: " + json.uv + "\n" +
+          "Light: " + json.light + " klx\n";
+
+    // Battery Status
+    const batteryOk = json.batteryOk;
+    const batteryEl = document.getElementById("batteryDisplay");
+    const statusBar = document.querySelector(".status-bar");
+
+    if (batteryOk === false) {
+      batteryEl.innerText = "🪫";
+      statusBar.classList.add("low-battery");
+    } else {
+      batteryEl.innerText = "🔋";
+      statusBar.classList.remove("low-battery");
+    }
+
+    // RSSI Display
+    const rssi = json.rssi;
+    const rssiEl = document.getElementById("rssiDisplay");
+
+    if (typeof rssi === "number") {
+      rssiEl.innerText = `RSSI: ${rssi} dBm`;
+      if (rssi < -85) {
+        statusBar.classList.add("weak-signal");
+      } else {
+        statusBar.classList.remove("weak-signal");
+      }
+        lastUpdateTime = Date.now();
+    }
+
 
             // Update chart
             if (!isNaN(json.temperature) && !isNaN(json.humidity)) {
@@ -509,6 +571,9 @@ void loop() {
       float rain     = ws.sensor[i].w.rain_ok     ? ws.sensor[i].w.rain_mm : NAN;
       float uv       = ws.sensor[i].w.uv_ok       ? ws.sensor[i].w.uv : NAN;
       float light    = ws.sensor[i].w.light_ok    ? ws.sensor[i].w.light_klx : NAN;
+      bool batteryOk = ws.sensor[i].battery_ok;
+      int rssi       = ws.sensor[i].rssi;
+
 
       latestSensorData = "{";
       latestSensorData += "\"temperature\":" + (isnan(temp) ? "null" : String(temp, 1)) + ",";
@@ -518,7 +583,9 @@ void loop() {
       latestSensorData += "\"windDir\":" + (isnan(windDir) ? "null" : String(windDir, 1)) + ",";
       latestSensorData += "\"rain\":" + (isnan(rain) ? "null" : String(rain, 1)) + ",";
       latestSensorData += "\"uv\":" + (isnan(uv) ? "null" : String(uv, 1)) + ",";
-      latestSensorData += "\"light\":" + (isnan(light) ? "null" : String(light, 1));
+      latestSensorData += "\"light\":" + (isnan(light) ? "null" : String(light, 1)) + ",";
+      latestSensorData += "\"batteryOk\":" + String(batteryOk ? "true" : "false") + ",";
+      latestSensorData += "\"rssi\":" + String(rssi);
       latestSensorData += "}";
 
 
