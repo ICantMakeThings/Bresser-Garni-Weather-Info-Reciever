@@ -7,7 +7,7 @@
 ![image](https://github.com/user-attachments/assets/78f303c8-a2fe-48b2-8f60-2aa954468118)
 ![image](https://github.com/user-attachments/assets/07f7664a-dc10-4586-98b4-dfb3d8cedcca)
 
-| CC1101 Pin | D1 Mini Pin |
+| CC1101 (433) | D1 Mini Pin |
 |------------|-------------|
 | 1          | GND         |
 | 2          | 3.3V        |
