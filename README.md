@@ -6,17 +6,18 @@
  
 ![image](https://github.com/user-attachments/assets/78f303c8-a2fe-48b2-8f60-2aa954468118)
 ![image](https://github.com/user-attachments/assets/07f7664a-dc10-4586-98b4-dfb3d8cedcca)
+![image](https://github.com/user-attachments/assets/d5714e7a-674e-4970-b3ef-adf265de4cbe)
 
-| CC1101 (433) | D1 Mini Pin |
-|------------|-------------|
-| 1          | GND         |
-| 2          | 3.3V        |
-| 3          | D2          |
-| 4          | D8          |
-| 5          | D5          |
-| 6          | D7          |
-| 7          | D6          |
-| 8          | D1          |
+| CC1101 (433) | D1 Mini Pin | CC1101 (868) |
+|------------|-------------|---------------|
+| 1          | GND         |2|
+| 2          | 3.3V        |1|
+| 3          | D2          |7|
+| 4          | D8          |8|
+| 5          | D5          |4|
+| 6          | D7          |3|
+| 7          | D6          |5|
+| 8          | D1          |6|
 
 ### Software setup:
 When you first program your D1 mini and everything is wired up,
