@@ -463,7 +463,7 @@ void handlePage() { // Loads the UI, with html and js
       </script>
       
       <footer style="text-align:center; margin-top: 40px; color: #555; font-size: 0.9rem; font-style: italic;">
-        Made by ICantMakeThings ;> https://icmt.pages.dev
+        Made by ICantMakeThings ;> https://icmt.cc
       </footer>
     </body>
   </html>
