@@ -22,7 +22,7 @@
 ### Software setup:
 When you first program your D1 mini and everything is wired up,
 you'll get a new Acsess point called `WeatherSetupAP`, connect to it
-the password is `ICantMakeThings` Next press config Wifi, select your
+the password is `ICantMakeThings` Next go to `http://192.168.4.1/` press "Configure WiFi" Wifi, select your
 home wifi from the list and enter the password, and press save.
 A window saying its saving the password will show, it should
 take about 1 minuite to save, once done the AP will dissapear.
