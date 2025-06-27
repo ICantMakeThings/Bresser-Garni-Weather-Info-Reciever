@@ -19,6 +19,9 @@
 | 7          | D6          |5|
 | 8          | D1          |6|
 
+![image](https://github.com/user-attachments/assets/06f738db-46e2-4a0f-88e7-0058c893d462)
+
+
 ### Software setup:
 When you first program your D1 mini and everything is wired up,
 you'll get a new Acsess point called `WeatherSetupAP`, connect to it
