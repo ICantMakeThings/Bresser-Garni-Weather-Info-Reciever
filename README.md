@@ -2,6 +2,14 @@
  
 ![image](https://github.com/user-attachments/assets/3abae9a5-da13-4954-bd19-1b025aa06c66)
 
+## Required Components
+
+- **D1 mini**: [AliExpress Link](https://s.click.aliexpress.com/e/_okiyGYu)
+- **CC1101(433)**: [AliExpress Link](https://s.click.aliexpress.com/e/_oC3i57w)
+or **CC1101(868)**: [AliExpress Link](https://s.click.aliexpress.com/e/_okc2eDS)
+
+*Note: Thease are referral links. If you purchase through it, I earn a commission at no extra cost to you.*
+
  Connections:
  
 ![image](https://github.com/user-attachments/assets/78f303c8-a2fe-48b2-8f60-2aa954468118)
