@@ -45,6 +45,9 @@ the next link will be [http://weather1.lan](http://weather1.lan/) then 2, 3, 4 a
 to reset wifi, go to a serial terminal like [this](https://serial.huhn.me/) and type in terminal `resetwifi` to reset to factory settings.
 
 ### Flashing:
+
+### **New! In [Releases](https://github.com/ICantMakeThings/Bresser-Garni-Weather-Info-Reciever/releases/tag/Release) A 3 click Flasher, (Linux only, will compile for mac or windows if you make a issue, comment on yt, email contact@icmt.cc)**
+
 Download latest [release](https://github.com/ICantMakeThings/Bresser-Garni-Weather-Info-Reciever/releases/download/Release/BGWIR-V2.bin),
 If your default download folder on your browser is downloads then all you need to do is:
 `esptool.py --port /dev/ttyUSB0 write_flash 0x00000 Downloads/BGWIR-V2.bin`
